@@ -402,35 +402,68 @@
       <div class="container">
         <div class="flex flex-wrap">
           <div class="w-full px-4 mb-10 lg:w-1/2">
-            <form>
+            <!-- Alert -->
+            <div
+              class="bg-emerald-200 border-solid border-2 border-emerald-800 text-emerald-900 px-4 py-3 rounded-md relative hidden mb-8 my-alert"
+              role="alert">
+              <strong class="font-bold">Terima Kasih!</strong> Pesan anda sudah kami terima.
+              <span class="absolute top-0 bottom-0 right-0 px-4 py-3" onclick="closeAlert()">
+                <svg class="fill-current h-6 w-6 text-emerald-800" role="button" xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 20 20">
+                  <title>Close</title>
+                  <path
+                    d="M14.348 14.849a1.2 1.2 0 0 1-1.697 0L10 11.819l-2.651 3.029a1.2 1.2 0 1 1-1.697-1.697l2.758-3.15-2.759-3.152a1.2 1.2 0 1 1 1.697-1.697L10 8.183l2.651-3.031a1.2 1.2 0 1 1 1.697 1.697l-2.758 3.152 2.758 3.15a1.2 1.2 0 0 1 0 1.698z" />
+                </svg>
+              </span>
+            </div>
+            <!-- Close Alert -->
+            <form name="contact-form">
               <div class="w-full px-4 mb-8">
                 <label for="name" class="text-base font-bold text-primary">Nama</label>
                 <input type="text" id="name" class="w-full bg-slate-200
                 text-dark p-3 rounded-md focus:outline-none focus:ring-primary 
-                focus:ring-1 focus:border-primary" />
+                focus:ring-1 focus:border-primary" name="nama" />
               </div>
               <div class="w-full px-4 mb-8">
                 <label for="email" class="text-base font-bold text-primary">Email</label>
                 <input type="email" id="email" class="w-full bg-slate-200
                 text-dark p-3 rounded-md focus:outline-none focus:ring-primary 
-                focus:ring-1 focus:border-primary" />
+                focus:ring-1 focus:border-primary" name="email" />
               </div>
               <div class="w-full px-4 mb-8">
                 <label for="message" class="text-base font-bold text-primary">Pesan</label>
                 <textarea type="email" id="email" class="w-full bg-slate-200
                 text-dark p-3 rounded-md focus:outline-none focus:ring-primary 
-                focus:ring-1 focus:border-primary h-32"></textarea>
+                focus:ring-1 focus:border-primary h-32" name="pesan"></textarea>
               </div>
-              <div class="w-full">
-                <button class="text-base font-semibold text-white bg-primary py-3 px-8 
+              <!-- Button Kirim -->
+              <div class="w-full btn-kirim">
+                <button type="submit" class="text-base font-semibold text-white bg-primary py-3 px-8 
                 rounded-full w-full hover:opacity-80 hover:shadow-lg transition duration-500">Kirim</button>
               </div>
+
+              <!-- Button Loading -->
+              <div class="w-full btn-loading hidden">
+                <button type="button"
+                  class="flex items-center justify-center w-full rounded-full text-base font-semibold text-white bg-primary px-8 py-3"
+                  disabled>
+                  <svg class="mr-3 h-5 w-5 animate-spin text-white" xmlns="http://www.w3.org/2000/svg" fill="none"
+                    viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor"
+                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
+                    </path>
+                  </svg>
+                  <span class="font-medium"> Processing... </span>
+                </button>
+              </div>
+
             </form>
           </div>
           <div class="w-full px-4 lg:w-1/2">
             <iframe class="relative max-w-full mx-auto"
               src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d5583.319792017688!2d114.27496522977532!3d-8.302462121301376!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2dd1512fd38cf5ff%3A0xac8a79ae078939a!2zOMKwMTgnMDIuMCJTIDExNMKwMTYnMzAuNCJF!5e0!3m2!1sid!2sid!4v1667697515916!5m2!1sid!2sid"
-              width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy"
+              width="600" height="470" style="border:0;" allowfullscreen="" loading="lazy"
               referrerpolicy="no-referrer-when-downgrade">
             </iframe>
           </div>
@@ -575,6 +608,42 @@
   <!-- Back to top End -->
 
   <script src="dist/js/script.js"></script>
+
+  <script>
+
+    const scriptURL = 'https://script.google.com/macros/s/AKfycbxQJhFWyLzR5Yoe9ToKbr_T_1MNRN_nhl_w91SP5H1Mts7isv-57p5CaPiZ-VL4O5VB/exec'
+    const form = document.forms['contact-form']
+    const btnKirim = document.querySelector('.btn-kirim');
+    const btnLoading = document.querySelector('.btn-loading');
+    const myAlert = document.querySelector('.my-alert');
+
+    // Close alert
+    function closeAlert() {
+      myAlert.classList.toggle('hidden');
+    }
+
+    form.addEventListener('submit', e => {
+      e.preventDefault();
+      // Ketika  tombol submit diklik
+      // Tampilkan tombol loading, hilangkan tombol kirim
+      btnLoading.classList.toggle('hidden');
+      btnKirim.classList.toggle('hidden');
+      fetch(scriptURL, { method: 'POST', body: new FormData(form) })
+        .then(response => {
+          // Tampilkan tombol kirim, hilangkan tombol loading
+          btnLoading.classList.toggle('hidden');
+          btnKirim.classList.toggle('hidden');
+
+          // Tampilkan alert
+          myAlert.classList.toggle('hidden');
+
+          // Reset form
+          form.reset();
+          console.log('Success!', response);
+        })
+        .catch(error => console.error('Error!', error.message))
+    })
+  </script>
 </body>
 
 </html>
